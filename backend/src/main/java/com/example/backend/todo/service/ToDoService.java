@@ -1,5 +1,6 @@
 package com.example.backend.todo.service;
 
+import com.example.backend.chatgpt.service.ChatGptApiService;
 import com.example.backend.helper.IdService;
 import com.example.backend.todo.ToDoRepository;
 import com.example.backend.todo.model.NewToDo;
@@ -15,6 +16,9 @@ public class ToDoService {
 
     private final ToDoRepository repository;
 
+    private final ChatGptApiService chatGptService;
+
+
     public List<ToDo> findAllTodos() {
         return repository.findAll();
     }
@@ -24,7 +28,8 @@ public class ToDoService {
     }
 
     public ToDo saveToDo(NewToDo newToDo) {
-        return repository.save(new ToDo(IdService.getId(),newToDo.description(),newToDo.status()));
+        String description = chatGptService.askChatGpt(newToDo.description());
+        return repository.save(new ToDo(IdService.getId(), description, newToDo.status()));
     }
 
     public ToDo updateTodo(String id, ToDo toDo){
